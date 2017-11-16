@@ -15,6 +15,7 @@ import           Data.Bool                      (bool)
 import           Data.Foldable
 import           Data.Int                       (Int64)
 import           Data.Text                      (Text)
+import qualified Data.Text.Lazy                 as LT
 import           Data.Text.Lens
 import qualified Data.Vector                    as Vector
 import           Data.Vector.Lens               (vector)
@@ -62,17 +63,18 @@ openUDPTransport = do
 
 
 
-jaegerThriftReporter :: MonadIO m => UDP -> FinishedSpan -> m ()
+jaegerThriftReporter :: MonadIO m => (String, UDP) -> FinishedSpan -> m ()
 jaegerThriftReporter r = flip runReaderT r . report
 
 
-report :: (MonadIO m, MonadReader UDP m) => FinishedSpan -> m ()
+report :: (MonadIO m, MonadReader (String, UDP) m) => FinishedSpan -> m ()
 report s = do
-    proto <- Thrift.CompactProtocol <$> ask
+    serviceName <- fst <$> ask
+    proto <- Thrift.CompactProtocol . snd <$> ask
     let spans = Vector.singleton . toThriftSpan $ s
     liftIO $
         Thrift.emitBatch (undefined, proto)
-                         Thrift.default_Batch { batch_spans = spans }
+                         Thrift.Batch { batch_process = Thrift.Process (LT.pack serviceName) Nothing, batch_spans = spans }
 
 toThriftSpan :: FinishedSpan -> Thrift.Span
 toThriftSpan s = Thrift.Span
