@@ -4,7 +4,7 @@
 {-# LANGUAGE ViewPatterns    #-}
 
 module OpenTracing.Sampling
-    ( Sampler(runSampler)
+    ( Sampler(Sampler, runSampler)
     , constSampler
     , probSampler
     , rateLimitSampler
