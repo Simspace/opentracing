@@ -36,7 +36,7 @@ import qualified Data.Text                  as Text
 import qualified Data.Text.Lazy.Encoding    as E
 import qualified Data.Text.Read             as TR
 import           Data.Word
-import           Network                    (HostName)
+import           Network.Socket             (HostName)
 
 
 data TraceID = TraceID

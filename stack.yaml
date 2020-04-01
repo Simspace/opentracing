@@ -14,4 +14,5 @@ allow-newer: true # required for thrift
 extra-deps:
 - thrift-0.10.0
 - optparse-applicative-0.14.0.0
-resolver: lts-9.21
+- vinyl-0.12.1
+resolver: lts-15.5
